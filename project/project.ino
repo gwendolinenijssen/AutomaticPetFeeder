@@ -6,9 +6,11 @@
 #define SERVO_PIN 15
 #define BUTTON_PIN 13
 
+#define OBSTACLE_DETECTED LOW
+
 TFT_eSPI tft = TFT_eSPI(); // Constructor for the TFT library
 /* The daily limit for amount of 'food droppings' per day */
-int dailyLimit = 3;
+int dailyLimit = 100;
 int totalDroppingsToday = 0;
 
 /* Information about servo */
@@ -30,7 +32,7 @@ AdafruitIO_Feed *statusTextFeed = io.feed("status_text");
 AdafruitIO_Feed *maxLimitFeed = io.feed("max_limit_text");
 
 void setup() {
-  //    pinMode(IR1_PIN,INPUT);
+  pinMode(IR1_PIN, INPUT);
   pinMode(BUTTON_PIN, INPUT_PULLDOWN);
   Serial.begin(115200);
   servo.attach(SERVO_PIN);
@@ -63,29 +65,36 @@ void loop() {
 
   /* Checks if button was pressed and handles debouncing. */
   buttonState = digitalRead(BUTTON_PIN);
-  Serial.println(buttonState);
+  //Serial.println(buttonState);
 
   if ((millis() - lastDebounceTime) > debounceDelay) {
     /* If button was pressed, drop food. */
     if (buttonState == HIGH) {
-      handleButtonPress();
+      triggerFoodDrop();
 
       lastDebounceTime = millis(); //set the current time
     }
   }
+
+  // TEST
+  Serial.println(digitalRead(IR1_PIN));
+
   /* Checks the reading from the IR sensor. */
-  //    Serial.println(analogRead(IR1_PIN));
-  //    delay(1000);
+  int IR_Reading = digitalRead(IR1_PIN);
+  if (IR_Reading == OBSTACLE_DETECTED) {
+    triggerFoodDrop();
+  }
 }
 
 /* Handles the data received by adafruit the feed of the button.*/
 void handleAdafruitButtonPress(AdafruitIO_Data *data) {
+  Serial.println("Button pressed through AdafruitIO");
   if (data->toString() == "1"){
-      handleButtonPress();
+      triggerFoodDrop();
   }
 }
 
-void handleButtonPress() {
+void triggerFoodDrop() {
   // TO DO: Check for a new day, reset limit
 
   /* If the daily limit was not exceeded, drop the food. */
@@ -112,7 +121,7 @@ void dropFood() {
   delay(droppingTime);
 
   for (int angle = angleMax; angle >= angleMin; angle -= angleStep) {
-    servo.write(angle);
+    //servo.write(angle);
     //    Serial.println(angle);
     delay(20);
   }

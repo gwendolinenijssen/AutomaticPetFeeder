@@ -1,0 +1,20 @@
+EESchema-LIBRARY Version 2.4
+#encoding utf-8
+#
+# KY-032
+#
+DEF KY-032 U 0 40 Y Y 1 F N
+F0 "U" 150 50 50 H V C CNN
+F1 "KY-032" 150 -50 50 H V C CNN
+F2 "" 150 50 50 H I C CNN
+F3 "" 150 50 50 H I C CNN
+DRAW
+S -250 100 450 -750 0 1 0 f
+X Enable ~ -350 -650 100 R 50 50 1 1 I
+X GND ~ -350 -200 100 R 50 50 1 1 I
+X out ~ -350 -500 100 R 50 50 1 1 I
+X Vcc ~ -350 -350 100 R 50 50 1 1 I
+ENDDRAW
+ENDDEF
+#
+#End Library

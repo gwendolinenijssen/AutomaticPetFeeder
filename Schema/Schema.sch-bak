@@ -1,0 +1,156 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L Device:R R1
+U 1 1 5EA0485A
+P 5400 3700
+F 0 "R1" V 5193 3700 50  0000 C CNN
+F 1 "20k" V 5284 3700 50  0000 C CNN
+F 2 "" V 5330 3700 50  0001 C CNN
+F 3 "~" H 5400 3700 50  0001 C CNN
+	1    5400 3700
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5EA06C5D
+P 5400 4100
+F 0 "#PWR?" H 5400 3850 50  0001 C CNN
+F 1 "GND" H 5405 3927 50  0000 C CNN
+F 2 "" H 5400 4100 50  0001 C CNN
+F 3 "" H 5400 4100 50  0001 C CNN
+	1    5400 4100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5400 3850 5400 4100
+Wire Wire Line
+	5400 3550 5400 3250
+$Comp
+L ttgo_esp32_correct:TTGO_ESP32_TDISPLAY_V1.1 TTGO
+U 1 1 5EB3D018
+P 2700 3950
+F 0 "TTGO" H 3050 5387 60  0000 C CNN
+F 1 "TTGO_ESP32_TDISPLAY_V1.1" H 3050 5281 60  0000 C CNN
+F 2 "" H 2700 3950 60  0001 C CNN
+F 3 "" H 2700 3950 60  0001 C CNN
+	1    2700 3950
+	1    0    0    -1  
+$EndComp
+$Comp
+L Motor:Motor_Servo M?
+U 1 1 5EB482A1
+P 5200 2200
+F 0 "M?" H 5532 2265 50  0000 L CNN
+F 1 "MicroServo" H 5532 2174 50  0000 L CNN
+F 2 "" H 5200 2010 50  0001 C CNN
+F 3 "http://forums.parallax.com/uploads/attachments/46831/74481.png" H 5200 2010 50  0001 C CNN
+	1    5200 2200
+	1    0    0    -1  
+$EndComp
+$Comp
+L KY-032:KY-032 IR_Sensor1
+U 1 1 5EB45445
+P 7100 3200
+F 0 "IR_Sensor1" H 7578 2921 50  0000 L CNN
+F 1 "KY-032" H 7578 2830 50  0000 L CNN
+F 2 "" H 7250 3250 50  0001 C CNN
+F 3 "" H 7250 3250 50  0001 C CNN
+	1    7100 3200
+	1    0    0    -1  
+$EndComp
+$Comp
+L HW-511:HW-511 IR_Sensor2
+U 1 1 5EB3E7F7
+P 7150 1900
+F 0 "IR_Sensor2" H 7428 1621 50  0000 L CNN
+F 1 "HW-511" H 7428 1530 50  0000 L CNN
+F 2 "" H 7150 1900 50  0001 C CNN
+F 3 "" H 7150 1900 50  0001 C CNN
+	1    7150 1900
+	1    0    0    -1  
+$EndComp
+$Comp
+L Switch:SW_Push_Dual SW?
+U 1 1 5EB402BB
+P 5200 3050
+F 0 "SW?" H 5200 3335 50  0000 C CNN
+F 1 "SW_Push_Dual" H 5200 3244 50  0000 C CNN
+F 2 "" H 5200 3250 50  0001 C CNN
+F 3 "~" H 5200 3250 50  0001 C CNN
+	1    5200 3050
+	1    0    0    -1  
+$EndComp
+Text GLabel 5000 3250 0    50   Input ~ 0
+Vcc
+Text GLabel 3600 2800 2    50   Input ~ 0
+Vcc
+Text GLabel 2500 2800 0    50   Input ~ 0
+BUTTON_PIN
+Text GLabel 5400 3050 2    50   Input ~ 0
+BUTTON_PIN
+Text GLabel 3600 3800 2    50   Input ~ 0
+IR1_PIN
+Text GLabel 6750 3700 0    50   Input ~ 0
+IR1_PIN
+Text GLabel 6750 3550 0    50   Input ~ 0
+Vcc
+$Comp
+L power:GND #PWR?
+U 1 1 5EB50F09
+P 6750 3400
+F 0 "#PWR?" H 6750 3150 50  0001 C CNN
+F 1 "GND" H 6755 3227 50  0000 C CNN
+F 2 "" H 6750 3400 50  0001 C CNN
+F 3 "" H 6750 3400 50  0001 C CNN
+	1    6750 3400
+	0    1    1    0   
+$EndComp
+Text GLabel 6750 2300 0    50   Input ~ 0
+Vcc
+$Comp
+L power:GND #PWR?
+U 1 1 5EB516A9
+P 6750 2150
+F 0 "#PWR?" H 6750 1900 50  0001 C CNN
+F 1 "GND" H 6755 1977 50  0000 C CNN
+F 2 "" H 6750 2150 50  0001 C CNN
+F 3 "" H 6750 2150 50  0001 C CNN
+	1    6750 2150
+	0    1    1    0   
+$EndComp
+Text GLabel 2500 3000 0    50   Input ~ 0
+SERVO_PIN
+Text GLabel 4900 2100 0    50   Input ~ 0
+SERVO_PIN
+Text GLabel 4900 2200 0    50   Input ~ 0
+Vcc
+$Comp
+L power:GND #PWR?
+U 1 1 5EB540C1
+P 4650 2300
+F 0 "#PWR?" H 4650 2050 50  0001 C CNN
+F 1 "GND" H 4655 2127 50  0000 C CNN
+F 2 "" H 4650 2300 50  0001 C CNN
+F 3 "" H 4650 2300 50  0001 C CNN
+	1    4650 2300
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	4650 2300 4900 2300
+Text GLabel 6750 3850 0    50   Input ~ 0
+Vcc
+$EndSCHEMATC

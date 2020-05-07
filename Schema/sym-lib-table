@@ -1,0 +1,5 @@
+(sym_lib_table
+  (lib (name ttgo_esp32_correct)(type Legacy)(uri C:/Users/gwend/Desktop/ttgo-tdisplay-kicad-master/ttgo_esp32_correct.lib)(options "")(descr ""))
+  (lib (name KY-032)(type Legacy)(uri ${KIPRJMOD}/KY-032.lib)(options "")(descr ""))
+  (lib (name HW-511)(type Legacy)(uri ${KIPRJMOD}/HW-511.lib)(options "")(descr ""))
+)

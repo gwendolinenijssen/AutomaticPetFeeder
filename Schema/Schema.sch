@@ -13,29 +13,8 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
-$Comp
-L ttgo_esp32_correct:TTGO_ESP32_TDISPLAY_V1.1 TTGO
-U 1 1 5EB3D018
-P 3350 4550
-F 0 "TTGO" H 3700 5987 60  0000 C CNN
-F 1 "TTGO_ESP32_TDISPLAY_V1.1" H 3700 5881 60  0000 C CNN
-F 2 "" H 3350 4550 60  0001 C CNN
-F 3 "" H 3350 4550 60  0001 C CNN
-	1    3350 4550
-	1    0    0    -1  
-$EndComp
 Text GLabel 4250 3400 2    50   Input ~ 0
 Vcc
-Text GLabel 3150 4100 0    50   Input ~ 0
-BUTTON_PIN
-Text GLabel 3150 3900 0    50   Input ~ 0
-IR1_PIN
-Text GLabel 3150 4200 0    50   Input ~ 0
-IR2_PIN
-Text GLabel 3150 4000 0    50   Input ~ 0
-SERVO_PIN
-Text GLabel 6950 3150 0    50   Input ~ 0
-IR2_PIN
 Text GLabel 6950 4550 0    50   Input ~ 0
 Vcc
 Wire Wire Line
@@ -55,19 +34,6 @@ Text GLabel 5300 2850 0    50   Input ~ 0
 Vcc
 Text GLabel 5300 2750 0    50   Input ~ 0
 SERVO_PIN
-$Comp
-L power:GND #PWR?
-U 1 1 5EB516A9
-P 6950 2850
-F 0 "#PWR?" H 6950 2600 50  0001 C CNN
-F 1 "GND" H 6955 2677 50  0000 C CNN
-F 2 "" H 6950 2850 50  0001 C CNN
-F 3 "" H 6950 2850 50  0001 C CNN
-	1    6950 2850
-	0    1    1    0   
-$EndComp
-Text GLabel 6950 3000 0    50   Input ~ 0
-Vcc
 $Comp
 L power:GND #PWR?
 U 1 1 5EB50F09
@@ -96,17 +62,6 @@ F 1 "SW_Push_Dual" H 5450 3894 50  0000 C CNN
 F 2 "" H 5450 3900 50  0001 C CNN
 F 3 "~" H 5450 3900 50  0001 C CNN
 	1    5450 3700
-	1    0    0    -1  
-$EndComp
-$Comp
-L HW-511:HW-511 IR_Sensor2
-U 1 1 5EB3E7F7
-P 7350 2600
-F 0 "IR_Sensor2" H 7628 2321 50  0000 L CNN
-F 1 "HW-511" H 7628 2230 50  0000 L CNN
-F 2 "" H 7350 2600 50  0001 C CNN
-F 3 "" H 7350 2600 50  0001 C CNN
-	1    7350 2600
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -159,4 +114,58 @@ F 3 "~" H 5650 4350 50  0001 C CNN
 $EndComp
 Text Notes 7350 7500 0    50   ~ 0
 Automatic Pet Feeder
+Text GLabel 4250 4000 2    50   Input ~ 0
+CAP_PIN
+Text GLabel 4250 3900 2    50   Input ~ 0
+CAP_T0_PIN
+$Comp
+L Device:R R_CAP
+U 1 1 5EBEC65D
+P 7250 2550
+F 0 "R_CAP" H 7320 2596 50  0000 L CNN
+F 1 "1M" H 7320 2505 50  0000 L CNN
+F 2 "" V 7180 2550 50  0001 C CNN
+F 3 "~" H 7250 2550 50  0001 C CNN
+	1    7250 2550
+	1    0    0    -1  
+$EndComp
+Text GLabel 7250 2400 1    50   Input ~ 0
+CAP_T0_PIN
+Text GLabel 7250 3000 3    50   Input ~ 0
+CAP_PIN
+$Comp
+L capsense:aluminium_foil cap
+U 1 1 5EBEFB27
+P 8200 2300
+F 0 "cap" H 8039 2235 50  0000 C CNN
+F 1 "aluminium_foil" H 8039 2144 50  0000 C CNN
+F 2 "" H 8200 2250 50  0001 C CNN
+F 3 "" H 8200 2250 50  0001 C CNN
+	1    8200 2300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7250 2700 7250 2850
+Wire Wire Line
+	7750 2850 7250 2850
+Connection ~ 7250 2850
+Wire Wire Line
+	7250 2850 7250 3000
+Text GLabel 3150 4000 0    50   Input ~ 0
+SERVO_PIN
+Text GLabel 3150 3900 0    50   Input ~ 0
+IR1_PIN
+Text GLabel 3150 4100 0    50   Input ~ 0
+BUTTON_PIN
+$Comp
+L ttgo_esp322:TTGO_ESP32_TDISPLAY_V1.1 TTGO?
+U 1 1 5EBF4DCE
+P 3350 4550
+F 0 "TTGO?" H 3700 5987 60  0000 C CNN
+F 1 "TTGO_ESP32_TDISPLAY_V1.1" H 3700 5881 60  0000 C CNN
+F 2 "" H 3350 4550 60  0001 C CNN
+F 3 "" H 3350 4550 60  0001 C CNN
+	1    3350 4550
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC

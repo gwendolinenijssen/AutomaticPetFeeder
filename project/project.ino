@@ -3,6 +3,7 @@
 #include "config.h"
 
 #define IR1_PIN 2
+#define IR2_PIN 12
 #define SERVO_PIN 15
 #define BUTTON_PIN 13
 
@@ -16,8 +17,8 @@ int totalDroppingsToday = 0;
 /* Information about servo */
 Servo servo;
 int angleStep = 5;
-int angleMin = 0;
-int angleMax = 180;
+int angleMin = 0; 
+int angleMax = 90;
 int droppingTime = 1000; // specified in millisecond
 
 /* Information about button/debouncing the physical button */
@@ -112,17 +113,18 @@ void resetTotalDropingsToday() {
 /* If button was pressed, rotate servo to amount of degrees declared by angleMax,
    wait for a given time (droppingTime) to drop the food and turn it back to the begin position (angleMin). */
 void dropFood() {
+  servo.write(0);
   for (int angle = angleMin; angle <= angleMax; angle += angleStep) {
     servo.write(angle);
-    //    Serial.println(angle);
+    Serial.println(angle);
     delay(20);
   }
 
   delay(droppingTime);
 
   for (int angle = angleMax; angle >= angleMin; angle -= angleStep) {
-    //servo.write(angle);
-    //    Serial.println(angle);
+    servo.write(angle);
+    Serial.println(angle);
     delay(20);
   }
 }

@@ -7,6 +7,9 @@
 #define SERVO_PIN 15
 #define BUTTON_PIN 13
 #define DELAYTIMEMS 1000
+//#define DELAYTIMEMS30SEC 30000
+#define DELAYTIMEMS30SEC 3000
+
 
 #define OBSTACLE_DETECTED LOW
 
@@ -33,8 +36,11 @@ AdafruitIO_Feed *indicatorFeed = io.feed("eating");
 AdafruitIO_Feed *statusTextFeed = io.feed("status_text");
 AdafruitIO_Feed *maxLimitFeed = io.feed("max_limit_text");
 
-// Value to store capsense reading
+// Values to store capsense reading/ handle readings
 uint16_t ReadTouchVal = 0;
+uint16_t emptyReading = 0;
+uint16_t filledReading = 0;
+uint16_t finalReading = 0;
 
 void setup() {
   pinMode(IR1_PIN, INPUT);
@@ -68,6 +74,8 @@ void setup() {
   touch_pad_set_cnt_mode(TOUCH_PAD_NUM8, TOUCH_PAD_SLOPE_7, TOUCH_PAD_TIE_OPT_LOW);
   touch_pad_set_voltage(TOUCH_HVOLT_2V4, TOUCH_LVOLT_0V8, TOUCH_HVOLT_ATTEN_1V5);
 
+  emptyReading = touch_pad_read(TOUCH_PAD_NUM8, &emptyReading);
+
   // TO DO: Work with idicator/status and max lim
   // TO DO: mss daily limit aanpasbaar maken via adafruit io
 }
@@ -89,7 +97,7 @@ void loop() {
   }
 
   // TEST
-  Serial.println(digitalRead(IR1_PIN));
+  //Serial.println(digitalRead(IR1_PIN));
 
   /* Checks the reading from the IR sensor. */
   int IR_Reading = digitalRead(IR1_PIN);
@@ -125,9 +133,11 @@ void resetTotalDropingsToday() {
    wait for a given time (droppingTime) to drop the food and turn it back to the begin position (angleMin). */
 void dropFood() {
   servo.write(0);
+  Serial.println("Dropping food");
+  
   for (int angle = angleMin; angle <= angleMax; angle += angleStep) {
     servo.write(angle);
-    Serial.println(angle);
+    //Serial.println(angle);
     delay(20);
   }
 
@@ -135,29 +145,84 @@ void dropFood() {
 
   for (int angle = angleMax; angle >= angleMin; angle -= angleStep) {
     servo.write(angle);
-    Serial.println(angle);
+    //Serial.println(angle);
     delay(20);
   }
+
+  eatingStarted();
 }
 
 /*
    Handles the capsense reading when the food was dropped.
 */
 void eatingStarted() {
+  Serial.println("Started eating");
+  int IR_Reading = digitalRead(IR1_PIN);
+
+  delay(2000); // give the time to let food fall;
+  filledReading = touch_pad_read(TOUCH_PAD_NUM8, &filledReading);
   // TO DO: check when empty/full and update message etc
   
+//  while (1) {
+//    if (TempTime + DELAYTIMEMS <= (millis())) {  //If DELAYTIMEMS has elapsed, new datapoint is read
+//      TempTime += DELAYTIMEMS;
+//
+//      touch_pad_read(TOUCH_PAD_NUM8, &ReadTouchVal);
+//      Serial.print(ReadTouchVal); Serial.write(',');
+//
+////      touch_pad_read_filtered(TOUCH_PAD_NUM8, &ReadTouchVal);
+////      Serial.println(ReadTouchVal);
+//    }
+//  }
+
+  /* Checks the capsense reading for 30 seconds.
+  If it's fairly stable for 30 seconds, an eating 'session' will end
+  and the variables will be updated:
+  If the reading is close to the empty bowl value, the message will be 
+  "Your pet finished it's food!". If it's too high and closer to the filled reading,
+  the message will be "Your pet has stopped eating. It didn't finish everything!". */
   long TempTime = millis(); //Contains the time for the updaterate
 
-  delay(10); //wait for settings to be applied
-  while (1) {
-    if (TempTime + DELAYTIMEMS <= (millis())) {  //If DELAYTIMEMS has elapsed, new datapoint is read
-      TempTime += DELAYTIMEMS;
+  while (DELAYTIMEMS30SEC != (millis()-TempTime)) {
+     Serial.println("Still eating");
 
-      touch_pad_read(TOUCH_PAD_NUM8, &ReadTouchVal);
-      Serial.print(ReadTouchVal); Serial.write(',');
-
-      touch_pad_read_filtered(TOUCH_PAD_NUM8, &ReadTouchVal);
-      Serial.println(ReadTouchVal);
-    }
+     /** 
+      *  If we detect the pet, the timer starts counting again because the pet
+      *  may still be eating.
+      */
+     if (IR_Reading == OBSTACLE_DETECTED) {
+       TempTime = millis();
+     } 
   }
+
+  int dataDifference = filledReading-emptyReading;
+  
+  finalReading = touch_pad_read(TOUCH_PAD_NUM8, &finalReading);
+
+  /* If the pet finished eating and the reading is closer to empty reading, pet finished its food. */
+  if ((finalReading < (filledReading - dataDifference)) || (finalReading == emptyReading)) {
+    petFinishedEating();
+  }
+
+  /* If the pet stopped eating and the reading is closer to filled reading, pet stopped and didnt finish its food. */
+  else if ((finalReading < (filledReading - dataDifference))|| (finalReading == filledReading)) {
+    petStoppedEating();
+  }
+  
+}
+
+void petFinishedEating(){
+  Serial.println("Pet Finished eating!");
+  // to do
+  // send message to display and adafruit: pet finished eating
+  // allow food drops again
+  
+}
+
+void petStoppedEating(){
+    Serial.println("Pet stopped eating, and didn't finish the food!");
+  // to do
+  // send message to display and adafruit: pet stopped eating, not finished
+  // allow food drops again
+  
 }

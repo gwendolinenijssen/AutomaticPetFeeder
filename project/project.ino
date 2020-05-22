@@ -16,7 +16,7 @@
 
 TFT_eSPI tft = TFT_eSPI(); // Constructor for the TFT library
 /* The daily limit for amount of 'food droppings' per day */
-int dailyLimit = 100;
+int dailyLimit = 3;
 int totalDroppingsToday = 0;
 
 /* Information about servo */
@@ -135,6 +135,8 @@ void resetTotalDropingsToday() {
 /* If button was pressed, rotate servo to amount of degrees declared by angleMax,
    wait for a given time (droppingTime) to drop the food and turn it back to the begin position (angleMin). */
 void dropFood() {
+  // Updates empty reading of capsense 
+  touch_pad_read(TOUCH_PAD_NUM8, &emptyReading);
   servo.write(0);
   Serial.println("Dropping food");
   
@@ -158,7 +160,7 @@ void dropFood() {
 /*
    Handles the capsense reading when the food was dropped.
 */
-void git () {
+void eatingStarted() {
   Serial.println("Started eating");
   int IR_Reading = digitalRead(IR1_PIN);
 
@@ -168,18 +170,7 @@ void git () {
   Serial.println(filledReading);
 
   // TO DO: check when empty/full and update message etc
-  
-//  while (1) {
-//    if (TempTime + DELAYTIMEMS <= (millis())) {  //If DELAYTIMEMS has elapsed, new datapoint is read
-//      TempTime += DELAYTIMEMS;
-//
-//      touch_pad_read(TOUCH_PAD_NUM8, &ReadTouchVal);
-//      Serial.print(ReadTouchVal); Serial.write(',');
-//
-////      touch_pad_read_filtered(TOUCH_PAD_NUM8, &ReadTouchVal);
-////      Serial.println(ReadTouchVal);
-//    }
-//  }
+
 
   /* Checks the capsense reading for 30 seconds.
   If it's fairly stable for 30 seconds (3 for demo), an eating 'session' will end

@@ -8,7 +8,8 @@
 #define BUTTON_PIN 13
 #define DELAYTIMEMS 1000
 //#define DELAYTIMEMS30SEC 30000
-#define DELAYTIMEMS30SEC 3000
+#define DELAYTIMEMS30SEC 30000
+#define DELAYTIMEMS3SEC 3000
 
 
 #define OBSTACLE_DETECTED LOW
@@ -74,7 +75,9 @@ void setup() {
   touch_pad_set_cnt_mode(TOUCH_PAD_NUM8, TOUCH_PAD_SLOPE_7, TOUCH_PAD_TIE_OPT_LOW);
   touch_pad_set_voltage(TOUCH_HVOLT_2V4, TOUCH_LVOLT_0V8, TOUCH_HVOLT_ATTEN_1V5);
 
-  emptyReading = touch_pad_read(TOUCH_PAD_NUM8, &emptyReading);
+  touch_pad_read(TOUCH_PAD_NUM8, &emptyReading);
+  Serial.println("Empty reading: ");
+  Serial.println(emptyReading);
 
   // TO DO: Work with idicator/status and max lim
   // TO DO: mss daily limit aanpasbaar maken via adafruit io
@@ -155,12 +158,15 @@ void dropFood() {
 /*
    Handles the capsense reading when the food was dropped.
 */
-void eatingStarted() {
+void git () {
   Serial.println("Started eating");
   int IR_Reading = digitalRead(IR1_PIN);
 
   delay(2000); // give the time to let food fall;
-  filledReading = touch_pad_read(TOUCH_PAD_NUM8, &filledReading);
+  touch_pad_read(TOUCH_PAD_NUM8, &filledReading);
+  Serial.println("Filled reading: ");
+  Serial.println(filledReading);
+
   // TO DO: check when empty/full and update message etc
   
 //  while (1) {
@@ -176,36 +182,39 @@ void eatingStarted() {
 //  }
 
   /* Checks the capsense reading for 30 seconds.
-  If it's fairly stable for 30 seconds, an eating 'session' will end
+  If it's fairly stable for 30 seconds (3 for demo), an eating 'session' will end
   and the variables will be updated:
   If the reading is close to the empty bowl value, the message will be 
   "Your pet finished it's food!". If it's too high and closer to the filled reading,
   the message will be "Your pet has stopped eating. It didn't finish everything!". */
   long TempTime = millis(); //Contains the time for the updaterate
-
-  while (DELAYTIMEMS30SEC != (millis()-TempTime)) {
+  int currentIRReading;
+  
+  while (DELAYTIMEMS3SEC > (millis()-TempTime)) {
      Serial.println("Still eating");
 
      /** 
       *  If we detect the pet, the timer starts counting again because the pet
       *  may still be eating.
       */
-     if (IR_Reading == OBSTACLE_DETECTED) {
+     currentIRReading = digitalRead(IR1_PIN);
+     if (currentIRReading == OBSTACLE_DETECTED) {
        TempTime = millis();
+       Serial.println("OBSTACLE DETECTED");
      } 
   }
 
-  int dataDifference = filledReading-emptyReading;
+  int dataDifference = emptyReading-filledReading;
   
-  finalReading = touch_pad_read(TOUCH_PAD_NUM8, &finalReading);
+  touch_pad_read(TOUCH_PAD_NUM8, &finalReading);
 
   /* If the pet finished eating and the reading is closer to empty reading, pet finished its food. */
-  if ((finalReading < (filledReading - dataDifference)) || (finalReading == emptyReading)) {
+  if ((finalReading >= (filledReading + (dataDifference / 2))) || (finalReading == emptyReading)) {
     petFinishedEating();
   }
 
   /* If the pet stopped eating and the reading is closer to filled reading, pet stopped and didnt finish its food. */
-  else if ((finalReading < (filledReading - dataDifference))|| (finalReading == filledReading)) {
+  else if ((finalReading <= (filledReading + (dataDifference / 2)))|| (finalReading == filledReading)) {
     petStoppedEating();
   }
   

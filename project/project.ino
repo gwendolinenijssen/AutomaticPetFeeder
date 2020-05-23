@@ -14,7 +14,6 @@
 #define OBSTACLE_DETECTED LOW
 
 TFT_eSPI tft = TFT_eSPI(); // Constructor for the TFT library
-void PrintEnCryptionScheme(uint8_t);
 
 /* Information about servo */
 Servo servo;
@@ -42,9 +41,8 @@ uint16_t filledReading = 0;
 uint16_t finalReading = 0;
 
 // Values to handle resetting the limit per day
-String dayStamp;
 /* The daily limit for amount of 'food droppings' per day */
-int dailyLimit = 3; // TO DO: get from Adafruit slider
+int dailyLimit = 3;
 int totalDroppingsToday = 0;
 struct tm startingDateTime;
 
@@ -62,8 +60,6 @@ void setup() {
 
   io.connect();
 
-  feedBtnFeed->onMessage(handleAdafruitButtonPress);
-
   // wait for a connection
   while (io.status() < AIO_CONNECTED) {
     Serial.print(".");
@@ -79,6 +75,12 @@ void setup() {
   statusTextFeed->get();
   maxLimitFeed->get();
   max_limit_slider->get();
+
+  feedBtnFeed->onMessage(handleAdafruitButtonPress);
+  max_limit_slider->onMessage(handleLimitChanged);
+  setNewLimitMessage(dailyLimit);
+  indicatorFeed->save(0);
+  statusTextFeed->save("Your pet hasn't eaten yet today.");
 
   touch_pad_init();
   touch_pad_config(TOUCH_PAD_NUM9, 0); //Num2==GPIO2, Threshold: 0 == not in use
@@ -137,6 +139,15 @@ void handleAdafruitButtonPress(AdafruitIO_Data *data) {
   }
 }
 
+/*
+   Handles the change of the max limit slider for daily food drops.
+*/
+void handleLimitChanged(AdafruitIO_Data *data) {
+  Serial.println(data->toString());
+  dailyLimit = data->toInt();
+  setNewLimitMessage(dailyLimit - totalDroppingsToday);
+}
+
 /**
    Will trigger a food drop if the daily limit hasn't been exceeded yet.
 */
@@ -145,6 +156,8 @@ void triggerFoodDrop() {
   if (totalDroppingsToday < dailyLimit) {
     dropFood();
     totalDroppingsToday++;
+
+    setNewLimitMessage(dailyLimit - totalDroppingsToday);
   }
 }
 
@@ -153,6 +166,28 @@ void triggerFoodDrop() {
 */
 void resetTotalDropingsToday() {
   totalDroppingsToday = 0;
+  setNewLimitMessage(dailyLimit);
+}
+
+/**
+   Changes the message displaying the food limit on Adafruit IO page
+   to a message with the given amount.
+*/
+void setNewLimitMessage(int amount) {
+  String limitMessage;
+  limitMessage = "Your pet has ";
+  if (amount <= 0) {
+    limitMessage += "no portions left for today.";
+
+  } else if (amount == 1) {
+    limitMessage +=  amount;
+    limitMessage += " portion left for today.";
+
+  } else {
+    limitMessage +=  amount;
+    limitMessage += " portions left for today.";
+  }
+  maxLimitFeed->save(limitMessage);
 }
 
 /**
@@ -233,18 +268,14 @@ void eatingStarted() {
 
 void petFinishedEating() {
   Serial.println("Pet Finished eating!");
-  // to do
-  // send message to display and adafruit: pet finished eating
-  // allow food drops again
-
+  indicatorFeed->save(0);
+  statusTextFeed->save("Your pet has finished eating!");
 }
 
 void petStoppedEating() {
   Serial.println("Pet stopped eating, and didn't finish the food!");
-  // to do
-  // send message to display and adafruit: pet stopped eating, not finished
-  // allow food drops again
-
+   indicatorFeed->save(1);
+   statusTextFeed->save("Your pet didn't finish its food!");
 }
 
 /**
@@ -274,8 +305,7 @@ void checkForNewDay() {
 /**
    Prints all the important pet feeder info to the TTGO display. (display not working!)
 */
-void printPetFeederInfo()
-{
+void printPetFeederInfo() {
   tft.init();
   tft.setRotation(3);            //setRotation: 1: Screen in landscape(USB to the right), 3:  Screen in landscape(USB connector Left)
   tft.fillScreen(TFT_YELLOW);         //Fill screen with random colour

@@ -89,7 +89,7 @@ void setup() {
   Serial.println();
   Serial.println(io.statusText());
 
-  feedBtnFeed->get();
+  //feedBtnFeed->get();
   indicatorFeed->get();
   statusTextFeed->get();
   maxLimitFeed->get();
@@ -266,8 +266,6 @@ void eatingStarted() {
    * detecting the pet. This is 3 seconds for the demo.
    * (Should be longer in case pet steps away for half a minute to drink but continues eating.)*/
   while (DELAYTIMEMS3SEC > (millis() - TempTime)) {
-    Serial.println("Still eating");
-
     /* If we detect the pet through the IR sensor, the timer starts counting again because the pet
         may still be eating. */
     currentIRReading = digitalRead(IR1_PIN);
@@ -349,6 +347,11 @@ void printPetFeederInfo(int amountLeft, String message) {
   tft.setTextColor(TFT_WHITE, TFT_BLACK); // Textcolor, BackgroundColor; independent of the fillscreen
   tft.println(message);
   tft.print("Portions left: ");
+
+  if (amountLeft <= 0) {
+    amountLeft = 0;
+  }
+  
   tft.println(amountLeft);
 
   previousMessage = message;
